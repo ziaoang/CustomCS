@@ -1,9 +1,10 @@
 Library/
 Temp/
+obj/
 *.sln
 *.csproj
 *.sln
 *.userprefs
 *.unityproj
 *.DS_Store
-
+*.pyc
