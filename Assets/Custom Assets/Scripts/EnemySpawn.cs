@@ -27,7 +27,7 @@ public class EnemySpawn : MonoBehaviour {
 
 		if (m_timer <= 0) {
 
-			m_timer = Random.Range (5, 10);
+			m_timer = Random.Range (20, 30);
 
 			Transform obj = Instantiate (m_enemy, m_transform.position, Quaternion.identity);
 

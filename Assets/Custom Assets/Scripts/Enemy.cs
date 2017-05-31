@@ -23,6 +23,11 @@ public class Enemy : MonoBehaviour {
 
 	EnemySpawn m_spawn;
 
+	public Transform m_drop1;
+	public Transform m_drop2;
+	public Transform m_drop3;
+	public Transform m_drop4;
+
 	void Start () {
 
 		m_transform = this.transform;
@@ -94,6 +99,17 @@ public class Enemy : MonoBehaviour {
 				m_spawn.m_currEnemyCount--;
 
 				m_player.OnScore (m_score);
+
+				float seed = Random.Range (0, 8);
+				if (seed < 1.0f) {
+					Instantiate (m_drop1, m_transform.position, Quaternion.identity);
+				} else if (seed < 2.0f) {
+					Instantiate (m_drop2, m_transform.position, Quaternion.identity);
+				} else if (seed < 2.0f) {
+					Instantiate (m_drop3, m_transform.position, Quaternion.identity);
+				} else if (seed < 3.0f) {
+					Instantiate (m_drop4, m_transform.position, Quaternion.identity);
+				}
 			}
 		}
 	}
