@@ -2,6 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+
+public enum GameState {
+	Playing,
+	Pause,
+	End
+}
 
 public class CanvasManager : MonoBehaviour {
 
@@ -21,6 +28,14 @@ public class CanvasManager : MonoBehaviour {
 
 	Text m_textAmmo;
 	Text m_textCharger;
+
+	GameState m_gameState;
+
+	GameObject m_pauseMenu;
+	GameObject m_endMenu;
+
+	float m_TimeScaleRef = 1.0f;
+	float m_VolumeRef = 1.0f;
 
 	void Start () {
 		Instance = this;
@@ -71,10 +86,84 @@ public class CanvasManager : MonoBehaviour {
 		SetBlood (m_player.m_blood, m_player.m_max_blood);
 		SetAmmo (m_player.m_ammo);
 		SetCharger (m_player.m_charger);
+
+		m_gameState = GameState.Playing;
+		m_pauseMenu = this.transform.FindChild ("PauseMenu").gameObject;
+		m_endMenu = this.transform.FindChild ("EndMenu").gameObject;
+
+		Cursor.visible = false;
+		Cursor.lockState = CursorLockMode.Locked;
+	}
+
+	void GamePause () {
+		m_gameState = GameState.Pause;
+		m_pauseMenu.SetActive (true);
+
+		m_TimeScaleRef = Time.timeScale;
+		Time.timeScale = 0.0f;
+
+		m_VolumeRef = AudioListener.volume;
+		AudioListener.volume = 0.0f;
+
+		Cursor.visible = true;
+		Cursor.lockState = CursorLockMode.None;
+	}
+
+	void GameResume () {
+		m_gameState = GameState.Playing;
+		m_pauseMenu.SetActive (false);
+
+		Time.timeScale = m_TimeScaleRef;
+		AudioListener.volume = m_VolumeRef;
+
+		Cursor.visible = false;
+		Cursor.lockState = CursorLockMode.Locked;
+	}
+
+	void GameEnd () {
+		m_gameState = GameState.End;
+		m_endMenu.SetActive (true);
+
+		m_TimeScaleRef = Time.timeScale;
+		Time.timeScale = 0.0f;
+
+		m_VolumeRef = AudioListener.volume;
+		AudioListener.volume = 0.0f;
+
+		Cursor.visible = true;
+		Cursor.lockState = CursorLockMode.None;
 	}
 
 	void Update () {
-		
+		if (m_gameState == GameState.Playing && Input.GetKeyUp (KeyCode.Escape)) {
+			GamePause ();
+		} else if (m_gameState == GameState.Pause && Input.GetKeyUp (KeyCode.Escape)) {
+			GameResume ();
+		}
+	}
+
+	public GameState GetGameState() {
+		return m_gameState;
+	}
+
+	public void ContinueGame() {
+		GameResume ();
+	}
+
+	public void RestartGame() {
+		SceneManager.LoadScene ("Main");
+	}
+
+	public void KeepGame() {
+		Debug.Log ("KeepGame");
+	}
+
+	public void QuitGame() {
+		Application.Quit ();
+	}
+
+	public void EndGame() {
+		GameEnd ();
 	}
 
 	public void SetAttack(int attack) {

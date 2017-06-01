@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using System;
 
 public class Player : MonoBehaviour {
@@ -46,7 +47,14 @@ public class Player : MonoBehaviour {
 	}
 
 	void Update () {
+		if (CanvasManager.Instance.GetGameState () == GameState.Pause)
+			return;
+		
+		if (CanvasManager.Instance.GetGameState () == GameState.End)
+			return;
+		
 		m_cdTimer -= Time.deltaTime;
+
 		if (m_ammo > 0 && m_cdTimer <= 0 && Input.GetMouseButton (0)) {
 			m_ammo--;
 			CanvasManager.Instance.SetAmmo (m_ammo);
@@ -118,6 +126,10 @@ public class Player : MonoBehaviour {
 
 		CanvasManager.Instance.SetShield (m_shield, m_max_shield);
 		CanvasManager.Instance.SetBlood (m_blood, m_max_blood);
+
+		if (m_blood <= 0) {
+			CanvasManager.Instance.EndGame ();
+		}
 	}
 
 	public void OnScore(int score) {
