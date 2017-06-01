@@ -91,6 +91,9 @@ public class CanvasManager : MonoBehaviour {
 		m_pauseMenu = this.transform.FindChild ("PauseMenu").gameObject;
 		m_endMenu = this.transform.FindChild ("EndMenu").gameObject;
 
+		Time.timeScale = m_TimeScaleRef;
+		AudioListener.volume = m_VolumeRef;
+
 		Cursor.visible = false;
 		Cursor.lockState = CursorLockMode.Locked;
 	}
