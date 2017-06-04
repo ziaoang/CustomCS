@@ -35,6 +35,10 @@ public class ButtonClick : MonoBehaviour {
 		Destroy(toast.gameObject, 2.0f);
 	}
 
+	public void IntroduceSceneButtonClick() {
+		SceneManager.LoadScene ("Login");
+	}
+
 	public void LoginSceneLoginButtonClick() {
 		if (username.text == "") {
 			Toast ("账号不能为空");
@@ -90,8 +94,31 @@ public class ButtonClick : MonoBehaviour {
 		yield return www;
 		if (www.error == null) {
 			Debug.Log (www.text);
+
 			var dict = Json.Deserialize(www.text) as Dictionary<string, object>;
+
+			Debug.Log (dict);
 			if (dict["status"].Equals("succ")) {
+				Share.m_username = (string)dict ["username"];
+				Share.m_is_save = (bool)dict ["is_save"];
+				if (Share.m_is_save) {
+					Share.m_remain_time    = (int) (long) dict["remain_time"];
+					Share.m_attack         = (int) (long) dict["attack"];
+					Share.m_range          = (int) (long) dict["range"];
+					Share.m_level          = (int) (long) dict["level"];
+					Share.m_experience     = (int) (long) dict["experience"];
+					Share.m_max_level      = (int) (long) dict["max_level"];
+					Share.m_max_experience = (int) (long) dict["max_experience"];
+					Share.m_score          = (int) (long) dict["score"];
+					Share.m_shield         = (int) (long) dict["shield"];
+					Share.m_max_shield     = (int) (long) dict["max_shield"];
+					Share.m_blood          = (int) (long) dict["blood"];
+					Share.m_max_blood      = (int) (long) dict["max_blood"];
+					Share.m_ammo           = (int) (long) dict["ammo"];
+					Share.m_max_ammo       = (int) (long) dict["max_ammo"];
+					Share.m_charger        = (int) (long) dict["charger"];
+					Share.m_max_charger    = (int) (long) dict["max_charger"];
+				}
 				SceneManager.LoadScene ("Main");
 			} else {
 				Toast (dict["message"].ToString());
@@ -112,13 +139,14 @@ public class ButtonClick : MonoBehaviour {
 			Debug.Log (www.text);
 			var dict = Json.Deserialize(www.text) as Dictionary<string, object>;
 			if (dict["status"].Equals("succ")) {
+				Share.m_username = username.text;
+				Share.m_is_save = false;
 				SceneManager.LoadScene ("Main");
 			} else {
 				Toast (dict["message"].ToString());
 			}
 		} else {
 			Toast (www.error);
-			yield return null;
 		}
 	}
 }

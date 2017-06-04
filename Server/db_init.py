@@ -9,9 +9,16 @@ from index import db, as_dict, md5, User
 
 
 def init_user():
-	db.session.add(User('user1', md5('123456'), 100, 100, 0))
-	db.session.add(User('user2', md5('123456'), 100, 100, 0))
-	db.session.add(User('user3', md5('123456'), 100, 100, 0))
+	userList = []
+	for line in open('data.txt'):
+		t = line.strip().split('\t')
+		user = User()
+		user.username      = t[0]
+		user.password_hash = md5('123456')
+		user.max_score     = int(t[1])
+		user.is_save       = False
+		userList.append(user)
+	db.session.add_all(userList)
 	db.session.commit()
 
 

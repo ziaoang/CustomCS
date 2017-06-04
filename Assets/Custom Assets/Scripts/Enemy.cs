@@ -5,6 +5,11 @@ using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour {
 
+	public Transform m_drop1;
+	public Transform m_drop2;
+	public Transform m_drop3;
+	public Transform m_drop4;
+
 	Transform m_transform;
 
 	Animator m_animator;
@@ -13,23 +18,20 @@ public class Enemy : MonoBehaviour {
 
 	Player m_player;
 
-	float m_timer = 1;
-
-	int m_life = 100;
-
-	int m_damage = 10;
-
-	int m_score = 10;
-
 	EnemySpawn m_spawn;
 
-	public Transform m_drop1;
-	public Transform m_drop2;
-	public Transform m_drop3;
-	public Transform m_drop4;
+	int m_life = 100;
+	int m_damage = 20;
+	int m_score = 100;
+	int m_experience = 100;
+
+	float m_range = 1.5f;
+	float m_rotSpeed = 10.0f;
+
+	float m_cdTimer = 0;
+	float m_waitTimer = 0.1f;
 
 	void Start () {
-
 		m_transform = this.transform;
 
 		m_animator = this.GetComponent<Animator> ();
@@ -40,6 +42,16 @@ public class Enemy : MonoBehaviour {
 	}
 
 	void Update () {
+		if (CanvasManager.Instance.GetGameState () == GameState.Pause)
+			return;
+
+		if (CanvasManager.Instance.GetGameState () == GameState.End)
+			return;
+
+		m_cdTimer -= Time.deltaTime;
+		if (m_cdTimer > 0)
+			return;
+		m_cdTimer = m_waitTimer;
 
 		// 过度状态
 		if (m_animator.IsInTransition (0)) {
@@ -50,55 +62,51 @@ public class Enemy : MonoBehaviour {
 
 		// 待机状态
 		if (stateInfo.IsName ("idle")) {
-			m_animator.SetBool ("idle", false);
-
-			m_timer -= Time.deltaTime;
-			if (m_timer <= 0) {
-				if (Vector3.Distance (m_transform.position, m_player.m_transform.position) < 1.5) {
-					m_animator.SetBool ("attack", true);
-				} else {
-					m_timer = 1;
-					m_agent.SetDestination (m_player.m_transform.position);
-					m_animator.SetBool ("run", true);
-				}
+			if (Vector3.Distance (m_transform.position, m_player.m_transform.position) < m_range) {
+				m_agent.isStopped = true;
+				m_animator.SetBool ("idle", false);
+				m_animator.SetBool ("attack", true);
+			} else {
+				m_agent.isStopped = false;
+				m_agent.SetDestination (m_player.m_transform.position);
+				m_animator.SetBool ("idle", false);
+				m_animator.SetBool ("run", true);
 			}
 		}
 
 		// 跑步状态
 		if (stateInfo.IsName ("run")) {
-			m_animator.SetBool ("run", false);
-
-			m_timer -= Time.deltaTime;
-			if (m_timer <= 0) {
-				m_timer = 1;
-				m_agent.SetDestination (m_player.m_transform.position);
-			}
-
-			if (Vector3.Distance (m_transform.position, m_player.m_transform.position) < 1.5) {
+			if (Vector3.Distance (m_transform.position, m_player.m_transform.position) < m_range) {
 				m_agent.isStopped = true;
+				m_animator.SetBool ("run", false);
 				m_animator.SetBool ("attack", true);
+			} else {
+				m_agent.isStopped = false;
+				m_agent.SetDestination (m_player.m_transform.position);
 			}
 		}
 
 		// 攻击状态
 		if (stateInfo.IsName ("attack")) {
-			m_animator.SetBool ("attack", false);
-
+			RotateToUser ();
+			m_agent.isStopped = true;
 			if (stateInfo.normalizedTime >= 1.0f) {
+				m_animator.SetBool ("attack", false);
 				m_animator.SetBool ("idle", true);
-				m_timer = 1;
 				m_player.OnDamage (m_damage);
 			}
 		}
 
 		// 死亡状态
 		if (stateInfo.IsName ("death")) {
+			m_agent.isStopped = true;
 			if (stateInfo.normalizedTime >= 1.0f) {
 				Destroy (this.gameObject);
 
 				m_spawn.m_currEnemyCount--;
 
 				m_player.OnScore (m_score);
+				m_player.OnExperience (m_experience);
 
 				float seed = Random.Range (0, 8);
 				if (seed < 1.0f) {
@@ -112,6 +120,12 @@ public class Enemy : MonoBehaviour {
 				}
 			}
 		}
+	}
+
+	void RotateToUser() {
+		Vector3 targetdir = m_player.m_transform.position - m_transform.position;
+		Vector3 newdir = Vector3.RotateTowards (m_transform.forward, targetdir, m_rotSpeed * Time.deltaTime, 0.0f);
+		m_transform.rotation = Quaternion.LookRotation (newdir);
 	}
 
 	public void OnDamage(int damage) {
