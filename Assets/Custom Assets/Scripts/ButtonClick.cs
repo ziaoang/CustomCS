@@ -75,22 +75,12 @@ public class ButtonClick : MonoBehaviour {
 		SceneManager.LoadScene ("Login");
 	}
 
-	IEnumerator IGetData(){
-		WWW www = new WWW ("http://127.0.0.1:5000/");
-		yield return www;
-		if (www.error != null) {
-			Debug.Log (www.error);
-			yield return null;
-		}
-		Debug.Log (www.text);
-	}
-
 	IEnumerator LoginPost() {
 		Dictionary<string, string> headers = new Dictionary<string, string> ();
 		headers ["Content-Type"] = "application/x-www-form-urlencoded";
 		string data = "username=" + username.text + "&password=" + password.text;
 		byte[] bs = System.Text.UTF8Encoding.UTF8.GetBytes (data);
-		WWW www = new WWW ("http://127.0.0.1:5000/login", bs, headers);
+		WWW www = new WWW (Share.m_serverUrl + "/login", bs, headers);
 		yield return www;
 		if (www.error == null) {
 			Debug.Log (www.text);
@@ -133,7 +123,7 @@ public class ButtonClick : MonoBehaviour {
 		headers ["Content-Type"] = "application/x-www-form-urlencoded";
 		string data = "username=" + username.text + "&password=" + password.text;
 		byte[] bs = System.Text.UTF8Encoding.UTF8.GetBytes (data);
-		WWW www = new WWW ("http://127.0.0.1:5000/register", bs, headers);
+		WWW www = new WWW (Share.m_serverUrl + "/register", bs, headers);
 		yield return www;
 		if (www.error == null) {
 			Debug.Log (www.text);

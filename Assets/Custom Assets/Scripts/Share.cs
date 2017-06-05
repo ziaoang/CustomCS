@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Share {
+//	static public string m_serverUrl = "http://127.0.0.1:5000";
+	static public string m_serverUrl = "http://47.93.32.11:8080";
+
 	static public string m_username;
 
 	static public bool m_is_save;

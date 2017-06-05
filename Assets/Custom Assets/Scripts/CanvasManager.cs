@@ -190,7 +190,7 @@ public class CanvasManager : MonoBehaviour {
 					+ "&charger="        + m_player.m_charger.ToString()
 					+ "&max_charger="    + m_player.m_max_charger.ToString();
 				byte[] bs = System.Text.UTF8Encoding.UTF8.GetBytes (data);
-		WWW www = new WWW ("http://127.0.0.1:5000/save", bs, headers);
+		WWW www = new WWW (Share.m_serverUrl + "/save", bs, headers);
 		yield return www;
 		if (www.error == null) {
 			Debug.Log (www.text);
@@ -257,7 +257,7 @@ public class CanvasManager : MonoBehaviour {
 		Player m_player = GameObject.FindGameObjectWithTag ("Player").GetComponent<Player> ();
 		string data = "username=" + Share.m_username + "&score="    + m_player.m_score.ToString ();
 		byte[] bs = System.Text.UTF8Encoding.UTF8.GetBytes (data);
-		WWW www = new WWW ("http://127.0.0.1:5000/end", bs, headers);
+		WWW www = new WWW (Share.m_serverUrl + "/end", bs, headers);
 		yield return www;
 		if (www.error == null) {
 			Debug.Log (www.text);
