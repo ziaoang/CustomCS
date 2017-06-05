@@ -84,10 +84,7 @@ public class ButtonClick : MonoBehaviour {
 		yield return www;
 		if (www.error == null) {
 			Debug.Log (www.text);
-
 			var dict = Json.Deserialize(www.text) as Dictionary<string, object>;
-
-			Debug.Log (dict);
 			if (dict["status"].Equals("succ")) {
 				Share.m_username = (string)dict ["username"];
 				Share.m_is_save = (bool)dict ["is_save"];

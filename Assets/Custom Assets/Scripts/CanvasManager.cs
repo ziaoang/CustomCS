@@ -54,7 +54,6 @@ public class CanvasManager : MonoBehaviour {
 	Text[] m_textTopScore = new Text[10];
 
 	float m_TimeScaleRef = 1.0f;
-	float m_VolumeRef = 1.0f;
 
 	void Awake () {
 		Instance = this;
@@ -92,11 +91,10 @@ public class CanvasManager : MonoBehaviour {
 		}
 
 		m_gameState = GameState.Playing;
-		m_pauseMenu = this.transform.FindChild ("PauseMenu").gameObject;
-		m_endMenu = this.transform.FindChild ("EndMenu").gameObject;
+		m_pauseMenu = this.transform.Find ("PauseMenu").gameObject;
+		m_endMenu = this.transform.Find ("EndMenu").gameObject;
 
 		Time.timeScale = m_TimeScaleRef;
-		AudioListener.volume = m_VolumeRef;
 
 		Cursor.visible = false;
 		Cursor.lockState = CursorLockMode.Locked;
@@ -126,9 +124,6 @@ public class CanvasManager : MonoBehaviour {
 		m_TimeScaleRef = Time.timeScale;
 		Time.timeScale = 0.0f;
 
-		m_VolumeRef = AudioListener.volume;
-		AudioListener.volume = 0.0f;
-
 		Cursor.visible = true;
 		Cursor.lockState = CursorLockMode.None;
 	}
@@ -138,7 +133,6 @@ public class CanvasManager : MonoBehaviour {
 		m_pauseMenu.SetActive (false);
 
 		Time.timeScale = m_TimeScaleRef;
-		AudioListener.volume = m_VolumeRef;
 
 		Cursor.visible = false;
 		Cursor.lockState = CursorLockMode.Locked;
@@ -214,9 +208,6 @@ public class CanvasManager : MonoBehaviour {
 
 		m_TimeScaleRef = Time.timeScale;
 		Time.timeScale = 0.0f;
-
-		m_VolumeRef = AudioListener.volume;
-		AudioListener.volume = 0.0f;
 
 		Cursor.visible = true;
 		Cursor.lockState = CursorLockMode.None;

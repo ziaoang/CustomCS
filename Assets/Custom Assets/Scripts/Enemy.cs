@@ -103,8 +103,6 @@ public class Enemy : MonoBehaviour {
 			if (stateInfo.normalizedTime >= 1.0f) {
 				Destroy (this.gameObject);
 
-				m_spawn.m_currEnemyCount--;
-
 				m_player.OnScore (m_score);
 				m_player.OnExperience (m_experience);
 
@@ -139,7 +137,10 @@ public class Enemy : MonoBehaviour {
 		}
 	}
 
-	public void Init(EnemySpawn spawn) {
-		m_spawn = spawn;
+	public void SetLevel(int level) {
+		m_life += level * 10;
+		m_damage += level * 5;
+		m_score += level * 10;
+		m_experience += level * 10;
 	}
 }

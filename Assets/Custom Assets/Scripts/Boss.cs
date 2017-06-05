@@ -23,8 +23,6 @@ public class Boss : MonoBehaviour {
 
 	Player m_player;
 
-	BossSpawn m_spawn;
-
 	Animation m_animation;
 
 	BossState m_bossState = BossState.idle;
@@ -40,7 +38,7 @@ public class Boss : MonoBehaviour {
 	float m_cdTimer = 0;
 	float m_waitTimer = 0.1f;
 
-	void Start () {
+	void Awake () {
 		m_transform = this.transform;
 
 		m_player = GameObject.FindGameObjectWithTag ("Player").GetComponent<Player> ();
@@ -109,8 +107,6 @@ public class Boss : MonoBehaviour {
 			if (!m_animation.isPlaying) {
 				Destroy (this.gameObject);
 
-				m_spawn.m_currBossCount--;
-
 				m_player.OnScore (m_score);
 				m_player.OnExperience (m_experience);
 
@@ -141,7 +137,11 @@ public class Boss : MonoBehaviour {
 		}
 	}
 
-	public void Init(BossSpawn spawn) {
-		m_spawn = spawn;
+	public void SetLevel(int level) {
+		m_life *= level;
+		m_damage += level * 20;
+		m_score *= level;
+		m_experience *= level;
+		m_agent.speed += level;
 	}
 }

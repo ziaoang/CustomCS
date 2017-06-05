@@ -14,6 +14,9 @@ public class Player : MonoBehaviour {
 	public AudioClip m_soundShoot;
 	public AudioClip m_soundNoAmmo;
 	public AudioClip m_soundReload;
+	public AudioClip m_soundBeattack;
+	public AudioClip m_soundDie;
+	public AudioClip m_soundTimeover;
 
 	public Transform m_fx;
 
@@ -104,6 +107,7 @@ public class Player : MonoBehaviour {
 				CanvasManager.Instance.SetTime (m_remain_time);
 				
 				if (m_remain_time <= 0) {
+					m_audioSource.PlayOneShot (m_soundTimeover);
 					CanvasManager.Instance.EndGame (EndGameType.Timeout);
 				}
 			}
@@ -154,7 +158,7 @@ public class Player : MonoBehaviour {
 	public void OnDamage(int damage) {
 		if (m_blood <= 0)
 			return;
-
+		
 		m_shield -= damage;
 		if (m_shield < 0) {
 			m_blood += m_shield;
@@ -167,8 +171,12 @@ public class Player : MonoBehaviour {
 		CanvasManager.Instance.SetShield (m_shield, m_max_shield);
 		CanvasManager.Instance.SetBlood (m_blood, m_max_blood);
 
-		if (m_blood <= 0)
+		if (m_blood <= 0) {
+			m_audioSource.PlayOneShot (m_soundDie);
 			CanvasManager.Instance.EndGame (EndGameType.Death);
+		} else {
+			m_audioSource.PlayOneShot (m_soundBeattack);
+		}
 	}
 
 	public void OnScore(int score) {

@@ -8,33 +8,29 @@ public class EnemySpawn : MonoBehaviour {
 
 	Transform m_transform;
 
-	public int m_currEnemyCount = 0;
-	public int m_maxEnemyCount = 3;
-
 	float m_cdTimer = 0f;
-	float m_waitTimer = 20f;
+	float m_waitTimer = 15f;
+
+	int level = 0;
 
 	void Start () {
 		m_transform = this.transform;
 	}
 
 	void Update () {
-		if (m_currEnemyCount >= m_maxEnemyCount)
-			return;
-
 		m_cdTimer -= Time.deltaTime;
 
 		if (m_cdTimer <= 0) {
 
-			m_cdTimer = m_waitTimer + Random.Range (-10, 10);
+			level++;
+
+			m_cdTimer = m_waitTimer + Random.Range (-5, 5);
 
 			Transform obj = Instantiate (m_enemy, m_transform.position, Quaternion.identity);
 
 			Enemy enemy = obj.GetComponent<Enemy> ();
 
-			enemy.Init (this);
-
-			m_currEnemyCount++;
+			enemy.SetLevel (level);
 		}
 	}
 }

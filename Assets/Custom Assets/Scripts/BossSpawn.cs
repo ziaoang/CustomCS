@@ -8,33 +8,28 @@ public class BossSpawn : MonoBehaviour {
 
 	Transform m_transform;
 
-	public int m_currBossCount = 0;
-	public int m_maxBossCount = 1;
-
 	float m_cdTimer = 60f;
 	float m_waitTimer = 60f;
+
+	int level = 0;
 
 	void Start () {
 		m_transform = this.transform;
 	}
 
 	void Update () {
-		if (m_currBossCount >= m_maxBossCount)
-			return;
-
 		m_cdTimer -= Time.deltaTime;
 
 		if (m_cdTimer <= 0) {
+			m_cdTimer = m_waitTimer;
 
-			m_cdTimer = m_waitTimer + Random.Range (-10, 10);
+			level++;
 
 			Transform obj = Instantiate (m_boss, m_transform.position, Quaternion.identity);
 
 			Boss boss = obj.GetComponent<Boss> ();
 
-			boss.Init (this);
-
-			m_currBossCount++;
+			boss.SetLevel (level);
 		}
 	}
 }
